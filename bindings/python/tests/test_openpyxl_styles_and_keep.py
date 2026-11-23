@@ -11,7 +11,7 @@ import pytest
 
 import xlcells.openpyxl as facade
 
-from conftest import CORPUS
+from conftest import CORPUS, needs_corpus
 
 MODULES = {"openpyxl": openpyxl, "xlcells": facade}
 
@@ -123,6 +123,7 @@ def corpus_sample():
 SIMPLIFIED = {"date_iso.xlsx"}
 
 
+@needs_corpus
 def test_loading_and_saving_keeps_everything_else():
     """Load, change one cell, save: all other parts of the file (charts, drawings,
     comments, defined names, themes, properties, macros) are byte for byte the same,
@@ -186,6 +187,7 @@ def test_loading_and_saving_keeps_everything_else():
     assert not problems, f"{len(problems)} problems:\n" + "\n".join(problems[:20])
 
 
+@needs_corpus
 def test_sheets_can_be_added_removed_and_renamed_on_a_loaded_workbook():
     """The same edits with openpyxl and with the facade; ours keeps the other parts."""
     warnings.simplefilter("ignore")

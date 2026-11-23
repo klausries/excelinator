@@ -12,7 +12,7 @@ import pytest
 
 import xlcells.openpyxl as facade
 
-from conftest import CORPUS
+from conftest import CORPUS, needs_corpus
 from test_openpyxl_styles_and_keep import parts
 
 MODULES = {"openpyxl": openpyxl, "xlcells": facade}
@@ -119,6 +119,7 @@ def chart_files():
     return sorted(found)[:40]
 
 
+@needs_corpus
 def test_charts_from_a_file_survive_changes_to_the_sheet():
     """Add a picture next to existing charts: openpyxl still finds every chart."""
     warnings.simplefilter("ignore")

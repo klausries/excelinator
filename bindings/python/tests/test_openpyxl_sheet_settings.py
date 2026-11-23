@@ -7,6 +7,8 @@ import zipfile
 import openpyxl
 import openpyxl.utils.cell as their_cells
 import pytest
+
+from conftest import needs_corpus
 from hypothesis import given, settings
 from hypothesis import strategies as st
 from openpyxl.worksheet.header_footer import HeaderFooterItem as TheirItem
@@ -137,6 +139,7 @@ def test_loaded_settings_stay_byte_for_byte_and_changes_land():
     assert {n for n in before if before[n] != after.get(n)} <= {"xl/worksheets/sheet1.xml", "xl/worksheets/sheet2.xml", "xl/workbook.xml"}
 
 
+@needs_corpus
 def test_settings_survive_files_from_excel_in_the_corpus():
     """Loading and saving keeps printer settings (r:id), compatibility attributes and the rest."""
     from conftest import CORPUS

@@ -14,7 +14,7 @@ import pytest
 
 import xlcells.openpyxl as x
 
-from conftest import CORPUS
+from conftest import CORPUS, needs_corpus
 
 
 def _model():
@@ -144,6 +144,7 @@ def test_xls_values_match_xlrd(path):
                     assert v == xlrd.error_text_from_code[cell.value], (sheet.name, r, c)
 
 
+@needs_corpus
 def test_xls_formulas_survive_saving_as_xlsx():
     files = [f for f in _xls_files(200) if os.path.getsize(f) < 300_000]
     seen = 0
