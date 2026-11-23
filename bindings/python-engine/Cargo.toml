@@ -1,0 +1,26 @@
+[package]
+name = "xlcells-engine-python"
+version = "0.1.0"
+edition = "2021"
+license = "MIT OR Apache-2.0"
+publish = false
+
+[lib]
+name = "_engine"
+crate-type = ["cdylib"]
+
+[dependencies]
+pyo3 = { version = "0.30", features = ["extension-module", "abi3-py39"] }
+xl-compat = { path = "../../crates/xl-compat" }
+xl-formula = { path = "../../crates/xl-formula" }
+xl-cells = { path = "../../crates/xl-cells" }
+xl-engine = { path = "../../crates/xl-engine" }
+xl-arrow = { path = "../../crates/xl-arrow" }
+serde_json = { version = "1", features = ["preserve_order", "float_roundtrip"] }
+xl-look = { path = "../../crates/xl-look", default-features = false }
+xl-polars = { path = "../../crates/xl-polars", optional = true }
+
+[features]
+# The engine's expressions on the Polars built in (`xlcells-engine-bundled`); without it
+# they run on the Polars of the Python environment (`xlcells-engine`).
+bundled = ["dep:xl-polars", "xl-look/polars"]

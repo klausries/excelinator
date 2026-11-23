@@ -1,0 +1,22 @@
+name: Something is wrong
+description: A workbook read, calculated or written back wrongly, or a tool that fails
+labels: [bug]
+body:
+  - type: textarea
+    attributes:
+      label: What happened
+      description: What you did, what you expected, what you got (messages, values).
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: The workbook
+      description: Attach it, or a cut-down copy. Never attach personal or confidential data.
+  - type: input
+    attributes:
+      label: Version and system
+      placeholder: "xlcells 0.1.0.dev1, Windows 11 x64, Python 3.13 (folder of the release)"
+  - type: dropdown
+    attributes:
+      label: Where
+      options: [Python (xlcells), MCP server / agent, the app, a port (Python project), other]

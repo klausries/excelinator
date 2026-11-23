@@ -1,0 +1,8 @@
+name: xlcells
+description: Read and write Excel workbooks as cell tables; includes a pyExcelerator-shaped API.
+version: 0.1.0
+publish_to: none
+environment:
+  sdk: ^3.5.0
+dev_dependencies:
+  test: ^1.25.0

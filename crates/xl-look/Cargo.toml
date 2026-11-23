@@ -1,0 +1,25 @@
+[package]
+name = "xl-look"
+version = "0.1.0"
+edition = "2021"
+license = "MIT OR Apache-2.0"
+description = "The formatting an Excel cell shows: every attribute resolved through named styles, row and column formats, table styles and conditional formats, with where it came from"
+
+[dependencies]
+chrono = { version = "0.4", default-features = false, features = ["clock"] }
+quick-xml = "0.42"
+xl-cells = { version = "0.1.0", path = "../xl-cells" }
+xl-formula = { version = "0.1.0", path = "../xl-formula" }
+xl-opc = { version = "0.1.0", path = "../xl-opc" }
+xl-serial = { version = "0.1.0", path = "../xl-serial" }
+xl-engine = { version = "0.1.0", path = "../xl-engine" }
+xl-polars = { version = "0.1.0", path = "../xl-polars", optional = true }
+
+[features]
+# The rules' formulas calculated by the built-in Polars (`Looker::new`); without it the
+# caller gives the engine (`Looker::with_engine`).
+default = ["polars"]
+polars = ["dep:xl-polars"]
+
+[dev-dependencies]
+serde_json = "1"

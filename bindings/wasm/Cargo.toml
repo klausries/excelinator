@@ -1,0 +1,20 @@
+[package]
+name = "xl-wasm"
+version = "0.1.0"
+edition = "2021"
+license = "MIT OR Apache-2.0"
+description = "xlcells as one WebAssembly module (wasm32-wasip1): reading and writing workbooks, the formula engine, stores, regions and the MCP server; its host (Python with wasmtime and Polars) runs the plans and reads and writes Parquet"
+publish = false
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+serde_json = { version = "1", features = ["preserve_order", "float_roundtrip"] }
+xl-cells = { path = "../../crates/xl-cells" }
+xl-compat = { path = "../../crates/xl-compat" }
+xl-engine = { path = "../../crates/xl-engine" }
+xl-formula = { path = "../../crates/xl-formula" }
+xl-look = { path = "../../crates/xl-look", default-features = false }
+xl-arrow = { path = "../../crates/xl-arrow", features = ["ipc"] }
+xl-mcp = { path = "../../crates/xl-mcp", default-features = false }

@@ -1,0 +1,28 @@
+PODS:
+  - file_selector_macos (0.0.1):
+    - FlutterMacOS
+  - FlutterMacOS (1.0.0)
+  - rust_lib_xl_app (0.0.1):
+    - FlutterMacOS
+
+DEPENDENCIES:
+  - file_selector_macos (from `Flutter/ephemeral/.symlinks/plugins/file_selector_macos/macos`)
+  - FlutterMacOS (from `Flutter/ephemeral`)
+  - rust_lib_xl_app (from `Flutter/ephemeral/.symlinks/plugins/rust_lib_xl_app/macos`)
+
+EXTERNAL SOURCES:
+  file_selector_macos:
+    :path: Flutter/ephemeral/.symlinks/plugins/file_selector_macos/macos
+  FlutterMacOS:
+    :path: Flutter/ephemeral
+  rust_lib_xl_app:
+    :path: Flutter/ephemeral/.symlinks/plugins/rust_lib_xl_app/macos
+
+SPEC CHECKSUMS:
+  file_selector_macos: e92931941479e44b02ac766d1961ca5c6f61b55b
+  FlutterMacOS: c232990155153907050900a2e175c7773903ba4e
+  rust_lib_xl_app: acbb6079e502a5ff11c9573db5d7c3081499f1b5
+
+PODFILE CHECKSUM: d7ebdfbe4492e0beb31a2cd85fcb870b768122ef
+
+COCOAPODS: 1.16.2

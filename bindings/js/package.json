@@ -1,0 +1,11 @@
+{
+  "name": "xlcells",
+  "version": "0.1.0",
+  "description": "Read and write Excel workbooks as cell tables; includes a pyExcelerator-shaped API",
+  "license": "MIT OR Apache-2.0",
+  "type": "module",
+  "main": "node.mjs",
+  "types": "node.d.ts",
+  "exports": { ".": { "types": "./node.d.ts", "default": "./node.mjs" }, "./web": "./pkg/web/xlcells.js", "./compat": "./compat.mjs" },
+  "scripts": { "test": "node --test" }
+}

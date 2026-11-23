@@ -1,0 +1,27 @@
+[package]
+name = "xl-mcp"
+version = "0.1.0"
+edition = "2021"
+license = "MIT OR Apache-2.0"
+description = "MCP server: Excel workbooks as stores of tables and logic, for agents that move them to a database application"
+
+[[bin]]
+name = "xl-mcp"
+path = "src/main.rs"
+required-features = ["native"]
+
+[dependencies]
+serde_json = { version = "1", features = ["preserve_order"] }
+tiny_http = { version = "0.12.0", optional = true }
+xl-cells = { version = "0.1.0", path = "../xl-cells" }
+xl-formula = { version = "0.1.0", path = "../xl-formula" }
+xl-compat = { version = "0.1.0", path = "../xl-compat" }
+xl-polars = { version = "0.1.0", path = "../xl-polars", optional = true }
+xl-engine = { version = "0.1.0", path = "../xl-engine" }
+zip = { version = "9.5.1", default-features = false, features = ["deflate"] }
+
+[features]
+# The program: the Polars built in (backend of stores) and a server on the network.
+# Without it (bindings/wasm) the host gives both.
+default = ["native"]
+native = ["dep:tiny_http", "dep:xl-polars"]

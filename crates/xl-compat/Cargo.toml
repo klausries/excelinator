@@ -1,0 +1,11 @@
+[package]
+name = "xl-compat"
+version = "0.1.0"
+edition = "2021"
+license = "MIT OR Apache-2.0"
+description = "Cell-level workbook API in the shape of pyExcelerator (Workbook, add_sheet, write, save, parse_xls) on top of xl-cells"
+
+[dependencies]
+xl-cells = { version = "0.1.0", path = "../xl-cells" }
+xl-serial = { version = "0.1.0", path = "../xl-serial" }
+xl-xls = { version = "0.1.0", path = "../xl-xls" }

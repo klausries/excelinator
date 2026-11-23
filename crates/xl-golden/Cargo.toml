@@ -1,0 +1,19 @@
+[package]
+name = "xl-golden"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+calamine = "0.38.0"
+formualizer-common = "4.2.0"
+formualizer-eval = "0.14.0"
+formualizer-workbook = { version = "0.14.0", default-features = false, features = ["system-clock"] }
+ironcalc = "0.9.1"
+ironcalc_base = "0.9.1"
+sha2 = "0.11.1"
+xl-cells = { version = "0.1.0", path = "../xl-cells" }
+xl-formula = { version = "0.1.0", path = "../xl-formula" }
+xl-polars = { version = "0.1.0", path = "../xl-polars" }
+xl-xls = { version = "0.1.0", path = "../xl-xls" }
+xl-opc = { version = "0.1.0", path = "../xl-opc" }
+zip = { version = "9.5.1", default-features = false, features = ["deflate"] }

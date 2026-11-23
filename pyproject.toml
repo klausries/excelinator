@@ -1,0 +1,36 @@
+# The Python side of the repository as a uv project: `uv sync` builds xlcells (bindings/python),
+# xlcells-engine (bindings/python-engine, on the Polars of the environment) and
+# xlcells-engine-bundled (the same code with Polars built in) with maturin into .venv,
+# editable, together with what the tests need. `uv run pytest bindings/python/tests` runs them.
+[project]
+name = "excelinator"
+version = "0.1.0"
+description = "Development environment of excelinator: xlcells (bindings/python) and its test dependencies"
+requires-python = ">=3.11"
+dependencies = ["xlcells", "xlcells-engine", "xlcells-engine-bundled"]
+
+[tool.uv]
+package = false
+
+[tool.uv.sources]
+xlcells = { path = "bindings/python", editable = true }
+xlcells-engine = { path = "bindings/python-engine", editable = true }
+xlcells-engine-bundled = { path = "bindings/python-engine-bundled", editable = true }
+
+[dependency-groups]
+dev = [
+    "polars",
+    "pyarrow",
+    "numpy",
+    "pytest",
+    "hypothesis",
+    "openpyxl",
+    "xlsxwriter",
+    "python-calamine",
+    "fastexcel",
+    "xlrd",
+    "xlwt",
+    "lxml",
+    "pillow",
+    "wasmtime",
+]

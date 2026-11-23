@@ -1,0 +1,27 @@
+[workspace]
+resolver = "2"
+members = ["crates/*", "bindings/python", "bindings/python-engine", "bindings/js", "bindings/c", "bindings/wasm"]
+default-members = ["crates/*"]
+# The desktop app builds its Rust part itself (app/desktop/rust, through Flutter).
+exclude = ["app"]
+
+[workspace.package]
+edition = "2021"
+license = "MIT OR Apache-2.0"
+authors = ["Klaus Ries"]
+version = "0.1.0"
+
+# Release builds are what is shipped (the Python wheels, xl-mcp): without symbols, and
+# optimised across crates. panic stays "unwind": the tools catch panics per file.
+[profile.release]
+debug = false
+strip = "symbols"
+lto = "thin"
+codegen-units = 4
+
+# For work on the code: as fast as release where it counts, linked in seconds
+# (`cargo test --profile quick`).
+[profile.quick]
+inherits = "release"
+lto = false
+codegen-units = 16

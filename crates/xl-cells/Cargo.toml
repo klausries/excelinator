@@ -1,0 +1,12 @@
+[package]
+name = "xl-cells"
+version = "0.1.0"
+edition = "2021"
+license = "MIT OR Apache-2.0"
+description = "Read and write the cells of Excel workbooks (xlsx) as one columnar table"
+
+[dependencies]
+quick-xml = "0.42"
+xl-formula = { version = "0.1.0", path = "../xl-formula" }
+xl-opc = { version = "0.1.0", path = "../xl-opc" }
+xl-serial = { version = "0.1.0", path = "../xl-serial" }

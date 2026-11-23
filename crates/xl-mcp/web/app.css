@@ -1,0 +1,169 @@
+/* In the manner of Excel: a green title bar, the levels as tabs of a ribbon, a formula
+   bar with a name box, a grid of thin grey lines, the sheets as tabs at the foot and a
+   status bar. The colours (--bg, --accent and so on) come from xl_app_core: one list
+   for every surface. */
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+body { font: 13px/1.4 Aptos, "Segoe UI", -apple-system, system-ui, sans-serif; background: var(--bg); color: var(--text); display: flex; flex-direction: column; overflow: hidden; }
+body.busy, body.busy * { cursor: progress !important; }
+a { color: var(--link); text-decoration: none; cursor: pointer; }
+a:hover { text-decoration: underline; }
+small { color: var(--soft); }
+h2 { font-size: 18px; font-weight: 600; margin: 0 0 10px; }
+h3 { font-size: 13px; font-weight: 600; margin: 18px 0 6px; }
+.mono, code { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12px; }
+
+/* Controls: flat like the ribbon, a line under a field that has the cursor. */
+button, select, input { font: inherit; color: inherit; }
+button { background: var(--bg); border: 1px solid var(--line); border-radius: 4px; padding: 3px 10px; cursor: pointer; white-space: nowrap; }
+button:hover:not(:disabled) { background: var(--panel); border-color: var(--soft); }
+header .ribbon > button { background: transparent; border-color: transparent; }
+header .ribbon > button:hover:not(:disabled) { background: var(--bg); border-color: var(--line); }
+button:active:not(:disabled) { background: var(--pick); }
+button:disabled { opacity: .4; cursor: default; }
+button.on { background: var(--accent); border-color: var(--accent); color: #fff; }
+select, input { background: var(--bg); border: 1px solid var(--line); border-radius: 4px; padding: 3px 7px; outline: none; }
+input:focus, select:focus { border-bottom: 2px solid var(--accent); padding-bottom: 2px; }
+input::placeholder { color: var(--soft); }
+input:disabled { background: var(--panel); }
+
+/* The head: the title bar in green, the tabs of the levels on a light ribbon. */
+header { flex: none; }
+header .title { display: flex; align-items: center; gap: 10px; padding: 0 12px; height: 40px; background: var(--brand); color: var(--onBrand); }
+.brand { font-size: 15px; font-weight: 700; letter-spacing: .01em; margin-right: 4px; }
+.brand::before { content: "▦"; margin-right: 7px; font-weight: 400; opacity: .9; }
+header .title select { background: #ffffff26; border-color: #ffffff40; color: var(--onBrand); min-width: 200px; }
+header .title select option { color: #242424; background: #fff; }
+header .title button { color: var(--onBrand); background: transparent; border-color: transparent; }
+header .title button:hover:not(:disabled) { background: #ffffff26; border-color: transparent; }
+header .ribbon { display: flex; align-items: center; gap: 4px; padding: 0 10px; height: 40px; background: var(--panel); border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+.grow { flex: 1; }
+.tabs { display: inline-flex; align-self: stretch; margin-right: 8px; }
+.tabs button { background: transparent; border: 0; border-radius: 0; padding: 0 14px; height: 100%; position: relative; color: var(--text); }
+.tabs button:hover:not(:disabled) { background: var(--bg); border: 0; }
+.tabs button.on { background: transparent; color: var(--accent); font-weight: 600; }
+.tabs button.on::after { content: ""; position: absolute; left: 10px; right: 10px; bottom: 4px; height: 3px; border-radius: 2px; background: var(--accent); }
+.badge { border-radius: 10px; padding: 1px 9px; font-size: 12px; white-space: nowrap; }
+.badge.warn { background: var(--kept); color: var(--warn); border: 1px solid var(--warn); }
+.badge.ok { color: var(--ok); border: 1px solid var(--ok); }
+.warn { color: var(--warn); }
+
+/* Body: the tables at the side, the content in the middle. */
+.body { flex: 1; display: flex; min-height: 0; }
+nav { width: 220px; flex: none; overflow: auto; background: var(--bg); border-right: 1px solid var(--line); padding: 4px 0 12px; }
+nav:empty { display: none; }
+nav h3 { margin: 12px 14px 4px; color: var(--soft); font-weight: 600; text-transform: uppercase; font-size: 11px; letter-spacing: .05em; }
+.item { display: flex; justify-content: space-between; gap: 8px; padding: 4px 14px; color: var(--text); border-left: 3px solid transparent; }
+.item:hover { background: var(--panel); text-decoration: none; }
+.item span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.item small { flex: none; }
+.item.on { background: var(--pick); border-left-color: var(--accent); font-weight: 600; }
+main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.pad { padding: 18px 22px; overflow: auto; flex: 1; }
+.pad > p { max-width: 760px; }
+.pad > button { align-self: flex-start; }
+
+/* The bar of a table or sheet: its name and its actions. */
+.bar { display: flex; align-items: center; gap: 6px; padding: 5px 12px; border-bottom: 1px solid var(--line); flex-wrap: wrap; background: var(--bg); }
+.bar > b { font-size: 14px; }
+.bar input { width: 180px; }
+.lines > * { display: block; }
+.line > * { margin-right: 6px; }
+.line > h3 { display: inline; }
+.count { color: var(--soft); }
+.hint { color: var(--soft); }
+.read { display: inline-block; margin-right: 6px; padding: 0 5px; border: 1px solid var(--line); border-radius: 3px; font-size: 12px; }
+
+/* The formula bar: the name box, ƒx, the line with the logic. */
+.formula { display: flex; align-items: center; gap: 8px; padding: 4px 8px; border-bottom: 1px solid var(--line); min-height: 34px; background: var(--bg); }
+.formula > b:first-child { min-width: 84px; padding: 2px 8px; border: 1px solid var(--line); border-radius: 3px; font-weight: 400; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12px; }
+.formula > small { font-style: italic; font-family: Georgia, serif; font-size: 14px; color: var(--soft); padding: 0 6px; border-left: 1px solid var(--line); border-right: 1px solid var(--line); }
+.formula input { flex: 1; min-width: 120px; border-color: transparent; }
+.formula input:focus { border-color: var(--line); border-bottom-color: var(--accent); }
+
+/* Grids: thin grey lines, grey heads, the picked cell framed in green. */
+.grid { flex: 1; overflow: auto; min-height: 0; background: var(--bg); }
+.grid table { border-collapse: separate; border-spacing: 0; }
+.grid th, .grid td { border-right: 1px solid var(--grid); border-bottom: 1px solid var(--grid); padding: 1px 6px; white-space: nowrap; max-width: 320px; overflow: hidden; text-overflow: ellipsis; height: 22px; }
+.grid thead th { position: sticky; top: 0; background: var(--head); z-index: 2; text-align: left; cursor: pointer; font-weight: 600; border-color: var(--line); }
+.grid thead tr.filters th { top: 37px; padding: 1px 2px; cursor: default; font-weight: 400; }
+.grid thead th small { display: block; font-weight: 400; font-size: 10px; line-height: 1.1; }
+.grid tbody th, .grid tfoot th, .grid .corner { position: sticky; left: 0; background: var(--head); color: var(--soft); font-weight: 400; text-align: right; z-index: 1; cursor: pointer; min-width: 42px; border-color: var(--line); }
+.grid thead .corner { z-index: 3; }
+.grid tfoot td, .grid tfoot th { position: sticky; bottom: 0; background: var(--head); font-weight: 600; border-top: 1px double var(--line); }
+.grid td.num { text-align: right; font-variant-numeric: tabular-nums; }
+.grid tbody tr:nth-child(even) td:not(.calc):not(.kept):not(.own) { background: color-mix(in srgb, var(--panel) 45%, var(--bg)); }
+.grid th.calc, .grid td.calc { background: var(--calc); }
+.grid th.kept, .grid td.kept { background: var(--kept); }
+.grid td.own { background: var(--own); }
+.grid tr.picked td, .grid tr.picked th { background: var(--pick) !important; }
+.grid tr.picked th { color: var(--accent); font-weight: 600; }
+.grid td.picked { outline: 2px solid var(--accent); outline-offset: -2px; }
+.grid > button, .grid > p { margin: 10px 12px; }
+.filter { width: 100%; min-width: 60px; border-radius: 2px; padding: 1px 4px; font-size: 12px; }
+.edit { width: 100%; min-width: 80px; padding: 0 3px; border: 0; border-radius: 0; outline: 2px solid var(--accent); outline-offset: -1px; }
+
+/* A sheet as Excel draws it. */
+.sheet { font-size: 13px; }
+.sheet td { cursor: cell; min-width: 64px; }
+.sheet thead th { text-align: center; cursor: default; font-weight: 400; color: var(--soft); }
+.sheet th.at { background: var(--pick) !important; color: var(--accent) !important; font-weight: 600 !important; box-shadow: inset 0 -2px var(--accent); }
+.sheet tbody th.at { box-shadow: inset -2px 0 var(--accent); }
+.sheet td.picked { outline: 2px solid var(--accent); outline-offset: -1px; }
+.sheet td.in.table { --edge: var(--table); }
+.sheet td.in.cells { --edge: var(--cells); }
+.sheet td.in.block { --edge: var(--block); }
+.sheet td[class*="edge-"] { box-shadow: var(--shadow); }
+.sheet td.edge-t { --shadow: inset 0 2px var(--edge); } .sheet td.edge-b { --shadow: inset 0 -2px var(--edge); }
+.sheet td.edge-l { --shadow: inset 2px 0 var(--edge); } .sheet td.edge-r { --shadow: inset -2px 0 var(--edge); }
+.sheet td.edge-tl { --shadow: inset 2px 2px var(--edge); } .sheet td.edge-tr { --shadow: inset -2px 2px var(--edge); }
+.sheet td.edge-bl { --shadow: inset 2px -2px var(--edge); } .sheet td.edge-br { --shadow: inset -2px -2px var(--edge); }
+.sheet td.edge-tb { --shadow: inset 0 2px var(--edge), inset 0 -2px var(--edge); }
+.sheet td.edge-lr { --shadow: inset 2px 0 var(--edge), inset -2px 0 var(--edge); }
+.sheet td.edge-tbl { --shadow: inset 2px 2px var(--edge), inset 0 -2px var(--edge); }
+.sheet td.edge-tbr { --shadow: inset -2px 2px var(--edge), inset 0 -2px var(--edge); }
+.sheet td.edge-tlr { --shadow: inset 2px 2px var(--edge), inset -2px 0 var(--edge); }
+.sheet td.edge-blr { --shadow: inset 2px -2px var(--edge), inset -2px 0 var(--edge); }
+.sheet td.edge-tblr { --shadow: inset 0 0 0 2px var(--edge); }
+
+/* The sheets as tabs at the foot. */
+.sheettabs { flex: none; display: flex; align-items: stretch; gap: 0; height: 30px; padding: 0 8px 0 50px; background: var(--panel); border-top: 1px solid var(--line); overflow-x: auto; }
+.sheettabs .tab { display: flex; align-items: center; padding: 0 16px; color: var(--text); border-right: 1px solid var(--line); white-space: nowrap; }
+.sheettabs .tab:first-child { border-left: 1px solid var(--line); }
+.sheettabs .tab:hover { background: var(--bg); text-decoration: none; }
+.sheettabs .tab.on { background: var(--bg); color: var(--accent); font-weight: 600; box-shadow: inset 0 -3px var(--accent); }
+
+/* The status bar. */
+footer#status { flex: none; display: flex; align-items: center; height: 24px; padding: 0 12px; background: var(--panel); border-top: 1px solid var(--line); font-size: 12px; color: var(--soft); }
+footer#status span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+footer#status .error { color: var(--error); }
+
+/* Chips for the kinds of regions, small tables on pages. */
+.legend { display: inline-flex; gap: 5px; flex-wrap: wrap; }
+.chip { border-radius: 10px; padding: 0 8px; border: 1px solid; font-size: 12px; }
+.chip.table { color: var(--table); } .chip.cells { color: var(--cells); } .chip.block { color: var(--block); }
+a.chip:hover { text-decoration: none; background: var(--panel); }
+table.plain { border-collapse: collapse; margin: 6px 0 14px; }
+table.plain th { background: var(--head); font-weight: 600; border-bottom: 1px solid var(--line); }
+table.plain th, table.plain td { border-bottom: 1px solid var(--grid); padding: 5px 14px 5px 8px; text-align: left; vertical-align: top; }
+table.plain tr:hover td { background: color-mix(in srgb, var(--panel) 50%, var(--bg)); }
+table.plain td.num { text-align: right; }
+table.plain tr.on td { font-weight: 600; }
+table.wide { width: 100%; }
+table.wide td:nth-child(3) { min-width: 280px; }
+table.wide input { width: 100%; }
+pre { background: var(--panel); border: 1px solid var(--line); border-radius: 4px; padding: 8px 10px; white-space: pre-wrap; }
+
+/* What was said: errors stay visible over the page for a while. */
+#toasts { position: fixed; right: 14px; bottom: 34px; display: flex; flex-direction: column; gap: 6px; z-index: 10; max-width: 460px; }
+.toast { background: var(--text); color: var(--bg); border-radius: 4px; padding: 8px 12px; box-shadow: 0 4px 14px #0003; }
+.toast.error { background: var(--error); color: #fff; }
+
+/* A question over the page. */
+.modal { position: fixed; inset: 0; background: #0006; display: flex; align-items: center; justify-content: center; z-index: 20; }
+.dialog { background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 18px; min-width: 360px; max-width: 520px; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 10px 40px #0005; }
+.dialog p { margin: 0; }
+.dialog input { width: 100%; }
+.dialog .buttons { display: flex; justify-content: flex-end; gap: 8px; }
+.dialog .buttons button { min-width: 80px; }
+.dialog .buttons button.on { border-color: var(--accent); }

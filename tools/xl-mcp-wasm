@@ -1,0 +1,6 @@
+#!/bin/sh
+# The MCP server on the WebAssembly module, as the tests start a server program
+# (XL_MCP=tools/xl-mcp-wasm): the Python of the repository's environment (.venv) with
+# xlcells, forced onto the module.
+root=$(cd "$(dirname "$0")/.." && pwd)
+XLCELLS_ENGINE=wasm exec "$root/.venv/bin/python" -m xlcells.mcp "$@"

@@ -1,0 +1,13 @@
+[package]
+name = "xl-xls"
+version = "0.1.0"
+edition = "2021"
+license = "MIT OR Apache-2.0"
+description = "Read Excel 97-2003 workbooks (.xls, BIFF8) into the xl-cells model"
+
+[dependencies]
+xl-cells = { version = "0.1.0", path = "../xl-cells" }
+
+[dev-dependencies]
+calamine = "0.38.0"
+regex = "1"

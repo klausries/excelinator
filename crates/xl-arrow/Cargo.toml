@@ -1,0 +1,19 @@
+[package]
+name = "xl-arrow"
+version = "0.1.0"
+edition = "2021"
+license = "MIT OR Apache-2.0"
+description = "The frames of xl-engine as Arrow C streams and back, without any dataframe library: the way they reach Polars, pyarrow or DuckDB of any version"
+
+[dependencies]
+arrow-array = { version = "60.1", default-features = false, features = ["ffi"] }
+arrow-buffer = { version = "60.1", default-features = false }
+arrow-cast = { version = "60.1", default-features = false }
+arrow-data = { version = "60.1", default-features = false, features = ["ffi"] }
+arrow-schema = { version = "60.1", default-features = false, features = ["ffi"] }
+xl-engine = { version = "0.1.0", path = "../xl-engine" }
+arrow-ipc = { version = "60.1", default-features = false, optional = true }
+
+[features]
+# Frames as bytes of the Arrow IPC stream format (for WebAssembly, see bindings/wasm).
+ipc = ["dep:arrow-ipc"]

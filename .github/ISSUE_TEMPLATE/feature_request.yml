@@ -1,0 +1,10 @@
+name: An idea
+description: Something excelinator should do
+labels: [idea]
+body:
+  - type: textarea
+    attributes:
+      label: What you want to do
+      description: The task, and the workbooks it is about. What you do today instead.
+    validations:
+      required: true

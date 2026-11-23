@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="de">
+<meta charset="utf-8">
+<title>excelinator im Chat (Prüfseite)</title>
+<style>
+  body { font: 14px/1.5 system-ui, sans-serif; max-width: 1100px; margin: 24px auto; padding: 0 16px; color-scheme: light dark; }
+  .said { border: 1px solid #8884; border-radius: 10px; padding: 10px 14px; margin: 10px 0; }
+  iframe { width: 100%; height: 300px; border: 1px solid #8886; border-radius: 10px; }
+  pre { font-size: 12px; opacity: .75; max-height: 180px; overflow: auto; }
+</style>
+<h3>So bettet ein Chat die App ein</h3>
+<p>Diese Seite spielt den Chat: Sie liest die App als Ressource vom MCP-Server (<code>resources/read</code>), zeigt sie in einem abgeschotteten Rahmen ohne eigenen Netzzugang und reicht ihre Aufrufe als <code>tools/call</code> an den Server weiter. Adresse: <code>chat.html?store=NAME.store&amp;level=data&amp;item=TABELLE</code>.</p>
+<div class="said" id="said">…</div>
+<iframe id="frame" sandbox="allow-scripts"></iframe>
+<pre id="log"></pre>
+<script>
+const mcp = location.pathname.replace(/\/app\/([^/]+)\/.*/, '/mcp/$1');
+let id = 0;
+const rpc = async (method, params) => (await fetch(mcp, { method: 'POST', body: JSON.stringify({ jsonrpc: '2.0', id: ++id, method, params }) })).json();
+const log = (text) => { const l = document.getElementById('log'); l.textContent += text + '\n'; l.scrollTop = l.scrollHeight; };
+const csp = `<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; media-src 'self' data:; connect-src 'none'">`;
+(async () => {
+  const q = new URLSearchParams(location.search);
+  const args = { store: q.get('store') || '', level: q.get('level') || 'data' };
+  if (q.get('item')) args.item = q.get('item');
+  await rpc('initialize', { protocolVersion: '2025-06-18', capabilities: { extensions: { 'io.modelcontextprotocol/ui': { mimeTypes: ['text/html;profile=mcp-app'] } } }, clientInfo: { name: 'excelinator test host', version: '1' } });
+  const tools = (await rpc('tools/list', {})).result.tools;
+  const tool = tools.find((t) => t.name === 'show_app');
+  const result = (await rpc('tools/call', { name: 'show_app', arguments: args })).result;
+  document.getElementById('said').textContent = 'show_app ' + JSON.stringify(args) + ' → ' + result.content[0].text;
+  const page = (await rpc('resources/read', { uri: tool._meta.ui.resourceUri })).result.contents[0];
+  const frame = document.getElementById('frame');
+  const to = (m) => frame.contentWindow.postMessage(Object.assign({ jsonrpc: '2.0' }, m), '*');
+  window.addEventListener('message', async (e) => {
+    if (e.source !== frame.contentWindow) return;
+    const m = e.data;
+    log('App: ' + (m.method || 'answer') + (m.method === 'tools/call' ? ' ' + m.params.arguments.op : ''));
+    if (m.method === 'ui/initialize') {
+      to({ id: m.id, result: { protocolVersion: '2026-01-26', hostInfo: { name: 'excelinator test host', version: '1' }, hostCapabilities: { serverTools: {}, openLinks: {} },
+        hostContext: { theme: matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light', displayMode: 'inline', containerDimensions: { maxHeight: 700 } } } });
+    } else if (m.method === 'ui/notifications/initialized') {
+      to({ method: 'ui/notifications/tool-input', params: { arguments: args } });
+      to({ method: 'ui/notifications/tool-result', params: result });
+    } else if (m.method === 'tools/call') {
+      // Only tools that are the app's to call.
+      const t = tools.find((x) => x.name === m.params.name);
+      const may = t && ((t._meta || {}).ui || {}).visibility ? t._meta.ui.visibility.includes('app') : !!t;
+      if (!may) return to({ id: m.id, error: { code: -32601, message: 'not a tool of the app' } });
+      const r = await rpc('tools/call', m.params);
+      to(r.error ? { id: m.id, error: r.error } : { id: m.id, result: r.result });
+    } else if (m.method === 'ui/notifications/size-changed') {
+      frame.style.height = m.params.height + 'px';
+    } else if (m.method === 'ui/open-link') {
+      window.open(m.params.url);
+      to({ id: m.id, result: {} });
+    } else if (m.id != null && m.method) {
+      to({ id: m.id, error: { code: -32601, message: 'not supported by this host' } });
+    }
+  });
+  frame.srcdoc = page.text.replace('<head>', '<head>' + csp);
+})().catch((e) => { document.getElementById('said').textContent = 'Fehler: ' + e; });
+</script>
+</html>

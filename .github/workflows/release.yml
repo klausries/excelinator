@@ -1,0 +1,98 @@
+# A release: a tag v… (or by hand). Builds the Python wheel (one for every processor:
+# the engine is WebAssembly) and the Windows folders, checks them on Windows x64 and
+# ARM64, Linux and macOS as they are installed, and makes a GitHub release (marked as
+# a pre-release) with them. Publishing to PyPI is not done here.
+name: release
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-wasip1
+      - uses: Swatinem/rust-cache@v2
+      - uses: astral-sh/setup-uv@v6
+      - run: uv run --no-project python tools/build_release.py --source "https://github.com/${{ github.repository }}"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+  windows:
+    needs: build
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: windows-latest
+            arch: x64
+          - runner: windows-11-arm
+            arch: arm64
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist
+      - name: the folder as it is unpacked (its own Python, nothing installed)
+        shell: pwsh
+        run: |
+          $zip = Get-ChildItem dist/excelinator-*-windows-${{ matrix.arch }}.zip
+          Expand-Archive $zip -DestinationPath unpacked
+          $folder = (Get-ChildItem unpacked)[0].FullName
+          & "$folder\xlcells-python.cmd" tools\smoke_release.py --mcp "$folder\xlcells-mcp.cmd"
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+          $env:XLCELLS_WASM_TARGET = "pulley64"
+          & "$folder\xlcells-python.cmd" tools\smoke_release.py --mcp "$folder\xlcells-mcp.cmd"
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+      - uses: astral-sh/setup-uv@v6
+      - name: the wheel, installed with uv
+        shell: pwsh
+        run: |
+          uv venv check --python 3.12
+          uv pip install --python check (Get-ChildItem dist/xlcells-*.whl).FullName
+          check\Scripts\python.exe tools\smoke_release.py --mcp check\Scripts\xlcells-mcp.exe
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+
+  others:
+    needs: build
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [ubuntu-latest, ubuntu-24.04-arm, macos-latest]
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist
+      - uses: astral-sh/setup-uv@v6
+      - run: |
+          uv venv check --python 3.12
+          uv pip install --python check dist/*.whl
+          check/bin/python tools/smoke_release.py --mcp check/bin/xlcells-mcp
+
+  publish:
+    needs: [windows, others]
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist
+      - env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "${{ github.ref_name }}" dist/* --prerelease --title "excelinator ${{ github.ref_name }} (pre-alpha)" --notes-file packaging/RELEASE_NOTES.md

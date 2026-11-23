@@ -1,0 +1,14 @@
+name: xl_app_core
+description: What the excelinator apps share (browser, chat, desktop) - the interface of the server, the state of the app and its screens as parts a surface draws.
+version: 0.1.0
+publish_to: none
+
+environment:
+  sdk: ^3.10.0
+
+dependencies:
+  http: ^1.2.0
+
+dev_dependencies:
+  lints: ^5.0.0
+  test: ^1.25.0

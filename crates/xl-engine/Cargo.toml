@@ -1,0 +1,11 @@
+[package]
+name = "xl-engine"
+version = "0.1.0"
+edition = "2021"
+license = "MIT OR Apache-2.0"
+description = "The logic of moving Excel workbooks into a database application, free of any dataframe library: the formula engine as column expressions, typed frames, regions, write-back, the Polars program, stores"
+
+[dependencies]
+serde_json = { version = "1", features = ["preserve_order", "float_roundtrip"] }
+xl-cells = { version = "0.1.0", path = "../xl-cells" }
+xl-formula = { version = "0.1.0", path = "../xl-formula" }

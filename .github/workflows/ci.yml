@@ -1,0 +1,37 @@
+# Every push and pull request: the Rust tests of the engine and the server, and the
+# Python package built as it is released (its engine as WebAssembly) with all Python
+# tests against it. The corpus of workbooks is not fetched here (tools/fetch_corpus.sh);
+# the tests that need it are skipped.
+name: ci
+on:
+  push:
+  pull_request:
+
+jobs:
+  rust:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-wasip1
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo test --profile quick -p xl-engine -p xl-mcp -p xl-wasm
+      - run: cargo test --profile quick -p xl-arrow --features ipc
+
+  python:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-wasip1
+      - uses: Swatinem/rust-cache@v2
+      - uses: astral-sh/setup-uv@v6
+      - run: uv run --no-project python tools/build_release.py --only wheel
+      - name: the wheel in an environment of its own, with what the tests use
+        run: |
+          uv venv /tmp/check --python 3.12
+          uv pip install --python /tmp/check dist/*.whl pytest hypothesis openpyxl xlsxwriter python-calamine fastexcel xlrd xlwt lxml pillow pyarrow numpy
+      - run: /tmp/check/bin/python -m pytest bindings/python/tests -q -p no:cacheprovider
+      - run: /tmp/check/bin/python tools/smoke_release.py --mcp /tmp/check/bin/xlcells-mcp

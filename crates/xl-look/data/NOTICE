@@ -1,0 +1,6 @@
+presetTableStyles.xml: the definitions of Excel's built-in table and pivot table styles
+(TableStyleLight1 ... TableStyleDark11, PivotStyleLight1 ... PivotStyleDark28), as
+published with ECMA-376 Part 1 and shipped by Apache POI
+(poi/src/resources/main/org/apache/poi/xssf/usermodel/presetTableStyles.xml,
+Apache License 2.0, Copyright The Apache Software Foundation). Whitespace between tags
+removed; content unchanged.

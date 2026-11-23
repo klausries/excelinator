@@ -1,0 +1,15 @@
+[build-system]
+requires = ["maturin>=1.7,<2"]
+build-backend = "maturin"
+
+[project]
+name = "xlcells-engine"
+version = "0.1.0"
+description = "The engine of xlcells: calculates Excel formulas on the Polars of the environment, gives sheets and regions as dataframes, stores, and the look of cells"
+license = { text = "MIT OR Apache-2.0" }
+requires-python = ">=3.11"
+dependencies = ["xlcells", "polars>=2,<3"]
+
+[tool.maturin]
+module-name = "xlcells_engine._engine"
+python-source = "python"

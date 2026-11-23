@@ -1,0 +1,33 @@
+# The Python package of a release: xlcells with its engine as one WebAssembly module, for
+# every processor (a py3-none-any wheel). tools/build_release.py fills in the version and
+# builds it; nothing is compiled where it is installed.
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[project]
+name = "xlcells"
+version = "@VERSION@"
+description = "Excel workbooks as tables, logic and data: read, write, calculate as Excel does, move them into Polars and Parquet and back, with an MCP server for agents"
+readme = "README.md"
+license = "MIT OR Apache-2.0"
+license-files = ["LICENSE-MIT", "LICENSE-APACHE"]
+authors = [{ name = "Klaus Ries" }]
+requires-python = ">=3.11"
+dependencies = ["polars>=2.1,<3", "wasmtime>=51,<52"]
+classifiers = [
+    "Development Status :: 2 - Pre-Alpha",
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+    "Topic :: Office/Business :: Financial :: Spreadsheet",
+]
+
+[project.urls]
+Source = "@SOURCE@"
+
+[project.scripts]
+xlcells-mcp = "xlcells.mcp:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["xlcells"]
+artifacts = ["xlcells/_wasm/xlcells.wasm"]
