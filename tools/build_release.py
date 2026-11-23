@@ -184,7 +184,7 @@ def build_skill():
 def checksums():
     lines = []
     for f in sorted(DIST.iterdir()):
-        if f.is_file() and f.name != "SHA256SUMS":
+        if f.is_file() and f.name != "SHA256SUMS" and not f.name.startswith("."):
             lines.append("{0}  {1}".format(hashlib.sha256(f.read_bytes()).hexdigest(), f.name))
     (DIST / "SHA256SUMS").write_text("\n".join(lines) + "\n")
 
